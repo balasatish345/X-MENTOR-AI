@@ -329,17 +329,32 @@ function renderTools(tools) {
     `).join('');
 }
 
-const GNEWS_API_KEY = "2ded3b42e811c6631c82559c3dc5adb4"; // Replace with the actual key when the user provides it, using a placeholder for now since the full key wasn't fully pasted. Wait, looking at the user prompt... they said "insert the api key" but didn't provide one. I will use a placeholder and instruct them. Actually, I should use the exact URL format they provided.
+const NEWS_API_KEY = "487fcbacc7c0414ab0c26784dd632ac4";
 
 async function fetchRealNews() {
+    console.log("📡 News Pulse: Initiating Sync...");
+
+    const targets = ['newsGrid', 'newsGridFull', 'newsGridDrawer'];
+    const showLoading = () => targets.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = `
+            <div class="col-span-full flex flex-col items-center py-20 opacity-40">
+                <span class="animate-spin text-5xl mb-6">⚙️</span>
+                <span class="text-[10px] tracking-[0.6em] font-black uppercase text-primary">Establishing Stream...</span>
+            </div>
+        `;
+    });
+
+    showLoading();
+
     try {
-        const url = `https://gnews.io/api/v4/top-headlines?category=technology&lang=en&apikey=${GNEWS_API_KEY}`;
+        const url = `https://newsapi.org/v2/everything?q=tesla&sortBy=publishedAt&apiKey=${NEWS_API_KEY}`;
+
         const response = await fetch(url);
 
         if (!response.ok) {
-            console.warn(`GNews API returned status ${response.status}. Falling back to curated data.`);
-            renderFallbackNews();
-            return;
+            const errorText = await response.text();
+            throw new Error(`Status ${response.status}: ${errorText}`);
         }
 
         const data = await response.json();
@@ -347,22 +362,36 @@ async function fetchRealNews() {
         if (data.articles && data.articles.length > 0) {
             const mappedArticles = data.articles.map(article => ({
                 title: article.title,
-                source: article.source.name || article.source,
+                source: article.source.name || "Global Intel",
                 publishedAt: article.publishedAt,
                 description: article.description,
                 url: article.url,
-                urlToImage: article.image
+                urlToImage: article.urlToImage
             }));
 
-            renderNews(mappedArticles, 'newsGrid');       // Home Section
-            renderNews(mappedArticles, 'newsGridFull');   // Full View
-            renderNews(mappedArticles, 'newsGridDrawer'); // Drawer
+            renderNews(mappedArticles, 'newsGrid');
+            renderNews(mappedArticles, 'newsGridFull');
+            renderNews(mappedArticles, 'newsGridDrawer');
+            console.log("✅ News Pulse: Sync Complete.");
         } else {
+            console.warn("⚠️ Data stream empty.");
             renderFallbackNews();
         }
     } catch (error) {
-        console.error("❌ News Fetch Error:", error.message);
-        renderFallbackNews();
+        console.error("🚨 News Pulse Error:", error);
+
+        targets.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = `
+                <div class="col-span-full flex flex-col items-center py-12 bg-red-500/5 border border-red-500/20 rounded-3xl">
+                    <span class="text-2xl mb-4">🚫</span>
+                    <span class="text-[9px] font-black uppercase tracking-widest text-red-500">Sync Interrupted</span>
+                    <p class="text-[8px] text-white/40 mt-2 px-6 text-center">${error.message.includes('fetch') ? 'CORS/Security Block: Please run via Live Server' : error.message}</p>
+                    <button onclick="fetchRealNews()" class="mt-4 px-4 py-2 border border-white/10 text-[8px] font-bold hover:bg-white hover:text-black transition-all">RETRY</button>
+                </div>
+            `;
+        });
+        setTimeout(renderFallbackNews, 3000);
     }
 }
 

@@ -84,3 +84,76 @@ function clearChat() {
         </div>
     `;
 }
+
+// GNews API Integration
+const NEWS_API_KEY = '487fcbacc7c0414ab0c26784dd632ac4';
+
+async function fetchNews() {
+    const newsFeed = document.getElementById('newsFeed');
+    if (!newsFeed) return;
+
+    // Show loading state
+    newsFeed.innerHTML = `
+        <div class="animate-pulse space-y-4">
+            <div class="h-32 bg-white/5 rounded-lg border border-white/5 flex flex-col items-center justify-center">
+                <span class="text-primary animate-spin mb-2">⚙️</span>
+                <span class="text-[8px] uppercase tracking-widest opacity-40">Syncing...</span>
+            </div>
+        </div>
+    `;
+
+    const url = `https://newsapi.org/v2/everything?q=tesla&sortBy=publishedAt&apiKey=${NEWS_API_KEY}`;
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            const errorMsg = await response.text();
+            throw new Error(`Status ${response.status}: ${errorMsg}`);
+        }
+
+        const data = await response.json();
+
+        if (data.articles && data.articles.length > 0) {
+            renderNews(data.articles);
+        } else {
+            newsFeed.innerHTML = `<p class="text-[10px] text-white/20 text-center p-8 uppercase tracking-widest">No matching results.</p>`;
+        }
+    } catch (error) {
+        console.error('Error fetching news:', error);
+        newsFeed.innerHTML = `
+            <div class="text-center p-8 bg-red-500/5 border border-red-500/20 rounded-xl">
+                <p class="text-[10px] text-red-500 uppercase font-black tracking-widest">Sync Error</p>
+                <p class="text-[8px] text-white/30 mt-2">${error.message.includes('fetch') ? 'Blocked by Browser (Use Live Server)' : error.message}</p>
+            </div>
+        `;
+    }
+}
+
+function renderNews(articles) {
+    const newsFeed = document.getElementById('newsFeed');
+    newsFeed.innerHTML = '';
+
+    articles.forEach(article => {
+        const item = document.createElement('div');
+        item.className = 'group cursor-pointer bg-white/5 border border-white/5 p-4 rounded-xl hover:bg-white/10 hover:border-primary/30 transition-all';
+        item.onclick = () => window.open(article.url, '_blank');
+
+        const displayImg = article.urlToImage || article.image;
+
+        item.innerHTML = `
+            ${displayImg ? `<img src="${displayImg}" class="w-full h-24 object-cover rounded-lg mb-3 grayscale group-hover:grayscale-0 transition-all duration-500 border border-white/5" />` : ''}
+            <h4 class="text-xs font-bold text-white/90 group-hover:text-primary transition-colors line-clamp-2 mb-1">${article.title}</h4>
+            <div class="flex items-center justify-between mt-2">
+                <span class="text-[8px] text-white/30 uppercase font-bold tracking-widest">${article.source.name}</span>
+                <span class="text-[8px] text-primary/50 font-mono italic">${new Date(article.publishedAt).toLocaleDateString()}</span>
+            </div>
+        `;
+        newsFeed.appendChild(item);
+    });
+}
+
+// Initialize news fetch on load
+document.addEventListener('DOMContentLoaded', () => {
+    fetchNews();
+});
