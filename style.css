@@ -173,7 +173,9 @@ body {
     border-radius: 10px;
 }
 
-/* Splash Screen */
+/* =========================================
+   CINEMATIC SPLASH SCREEN (HOLLYWOOD GRADE)
+   ========================================= */
 #splash-screen {
     position: fixed;
     inset: 0;
@@ -182,78 +184,224 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: row;
-    perspective: 1000px;
-    /* CSS Fallback: Fade out after 5s even if JS fails */
-    animation: splashFallback 1s ease-in 4.5s forwards;
+    overflow: hidden;
+    perspective: 2000px;
+    /* Deep perspective for 3D */
+    animation: cinematicFadeOut 1.5s cubic-bezier(0.7, 0, 0.3, 1) 5.5s forwards;
 }
 
-@keyframes splashFallback {
-    to {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-    }
+/* Atmosphere & Lighting */
+.cinematic-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, transparent 0%, #000 80%);
+    z-index: 10;
+    opacity: 0.8;
 }
 
-.splash-x {
-    font-size: 160px;
-    font-weight: 900;
-    color: #00C853;
-    animation: rotateX 2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-    text-shadow: 0 0 100px rgba(0, 200, 83, 0.4);
-    line-height: 1;
-    z-index: 50;
+.flare {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200vw;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 200, 83, 0.8) 50%, transparent 100%);
+    box-shadow: 0 0 50px #00C853, 0 0 100px #00C853;
+    opacity: 0;
+    z-index: 5;
+    animation: anamorphicFlare 4.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.particles {
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 50% 50%, rgba(0, 200, 83, 0.1) 1px, transparent 1px),
+        radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 100px 100px;
+    opacity: 0;
+    animation: floatingDust 10s linear infinite, dustFadeIn 2s 1s forwards;
+    z-index: 15;
+}
+
+/* Core Content Container */
+.splash-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
-    user-select: none;
+    z-index: 20;
+    transform-style: preserve-3d;
 }
 
+/* The 'X' Reveal */
+.splash-x {
+    font-size: 200px;
+    font-weight: 900;
+    color: #000;
+    -webkit-text-stroke: 2px #00C853;
+    line-height: 1;
+    position: relative;
+    opacity: 0;
+    transform: translateZ(-1000px) rotateY(-90deg);
+    animation: cinematicXReveal 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Adding the glowing core to the X */
+.splash-x::after {
+    content: 'X';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #00C853;
+    -webkit-text-stroke: 0;
+    filter: drop-shadow(0 0 30px #00C853);
+    opacity: 0;
+    animation: xCoreIgnition 2s 2s forwards;
+}
+
+/* Text Container */
+.splash-mentor-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+/* The 'MENTOR AI' Text Reveal */
 .splash-mentor {
-    font-size: 56px;
-    font-weight: 800;
+    font-size: 64px;
+    font-weight: 900;
     color: #fff;
     white-space: nowrap;
     opacity: 0;
-    margin-left: -40px;
-    padding-left: 60px;
-    border-left: 2px solid rgba(0, 200, 83, 0.3);
-    clip-path: inset(0 100% 0 0);
-    animation: revealMentorProd 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) 1.2s forwards;
-    z-index: 40;
+    clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+    animation: dataScanReveal 1.5s cubic-bezier(0.7, 0, 0.3, 1) 2.2s forwards;
 }
 
-@keyframes rotateX {
+.splash-subtitle {
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: subtitleDrop 1s cubic-bezier(0.2, 0.8, 0.2, 1) 3.5s forwards;
+}
+
+/* ================== KEYFRAMES ================== */
+
+@keyframes anamorphicFlare {
     0% {
-        transform: scale(0) rotate(0deg);
+        transform: translate(-50%, -50%) scaleX(0);
+        opacity: 0;
+        filter: blur(10px);
+    }
+
+    30% {
+        transform: translate(-50%, -50%) scaleX(1);
+        opacity: 1;
+        filter: blur(2px);
+    }
+
+    70% {
+        transform: translate(-50%, -50%) scaleX(1);
+        opacity: 1;
+        filter: blur(2px);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scaleX(0);
+        opacity: 0;
+        filter: blur(20px);
+    }
+}
+
+@keyframes cinematicXReveal {
+    0% {
+        transform: translateZ(-1000px) rotateY(-90deg) scale(0.5);
         opacity: 0;
         filter: blur(20px);
     }
 
-    50% {
-        transform: scale(1.1) rotate(180deg);
-        opacity: 1;
-        filter: blur(0);
-    }
-
     100% {
-        transform: scale(1) rotate(360deg);
+        transform: translateZ(0) rotateY(0deg) scale(1);
         opacity: 1;
         filter: blur(0);
     }
 }
 
-@keyframes revealMentorProd {
+@keyframes xCoreIgnition {
     0% {
         opacity: 0;
-        clip-path: inset(0 100% 0 0);
-        transform: translateX(-40px);
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 100px #00C853) blur(10px);
     }
 
     100% {
         opacity: 1;
-        clip-path: inset(0 0 0 0);
-        transform: translateX(20px);
-        letter-spacing: 12px;
+        transform: scale(1);
+        filter: drop-shadow(0 0 30px #00C853) blur(0);
+    }
+}
+
+@keyframes dataScanReveal {
+    0% {
+        opacity: 0;
+        clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+        transform: translateX(-50px);
+        filter: blur(10px);
+    }
+
+    50% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 1;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        transform: translateX(0);
+        letter-spacing: 15px;
+    }
+}
+
+@keyframes subtitleDrop {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes floatingDust {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-50px) scale(1.1);
+    }
+
+    100% {
+        transform: translateY(-100px) scale(1);
+    }
+}
+
+@keyframes dustFadeIn {
+    to {
+        opacity: 0.5;
+    }
+}
+
+@keyframes cinematicFadeOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.1);
+        filter: blur(20px);
+        visibility: hidden;
+        pointer-events: none;
     }
 }
 
@@ -265,7 +413,7 @@ body:not(.app-ready) #chatWindow,
 body:not(.app-ready) [onclick="toggleChat"] {
     opacity: 0;
     pointer-events: none;
-    animation: revealContent 1s ease-in 4.5s forwards;
+    animation: revealContent 1.5s ease-in 5.5s forwards;
 }
 
 @keyframes revealContent {
