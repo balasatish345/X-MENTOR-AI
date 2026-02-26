@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-Mentor AI | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF3366', // Hot Pink / Red for Chat
+                        background: '#000000',
+                        navy: '#1a1a2e',
+                        surface: '#121212',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background text-white font-sans antialiased overflow-x-hidden app-ready h-screen flex flex-col">
+
+    <!-- Global Premium Animated Background -->
+    <div id="global-bg" class="fixed inset-0 -z-50 overflow-hidden bg-black pointer-events-none">
+        <div
+            class="absolute w-[800px] h-[800px] bg-primary/10 blur-[100px] mix-blend-screen animate-blob top-1/4 left-1/4">
+        </div>
+        <div
+            class="absolute w-[600px] h-[600px] bg-[#1a0510] blur-[100px] mix-blend-screen animate-blob animation-delay-2000 top-1/3 right-1/4">
+        </div>
+        <div
+            class="absolute w-[500px] h-[500px] bg-primary/5 blur-[100px] mix-blend-screen animate-blob animation-delay-4000 bottom-1/4 left-1/3">
+        </div>
+        <div class="global-particles"></div>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-[30px]"></div>
+    </div>
+
+    <!-- Navbar Minimal -->
+    <nav class="fixed top-0 w-full z-40 bg-background/80 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <button onclick="window.location.href='index.html'"
+                    class="text-xl sm:text-2xl font-bold tracking-tighter hover:text-white/80 transition-colors whitespace-nowrap">
+                    X-MENTOR <span class="text-white">AI</span>
+                </button>
+            </div>
+            <div class="flex items-center space-x-4 text-xs font-bold tracking-widest uppercase">
+                <span class="text-primary italic">Dashboard</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="window.location.href='index.html'"
+                    class="border border-white/20 hover:border-primary px-4 py-2 text-sm transition-all text-white no-underline">
+                    RETURN HOME
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CHATBOT DASHBOARD -->
+    <main class="flex-1 max-w-7xl mx-auto w-full pt-28 pb-8 px-4 sm:px-6 flex flex-col">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl sm:text-5xl font-black tracking-tighter uppercase">AI <span
+                    class="text-primary italic">MENTOR</span></h2>
+            <p class="text-white/40 mt-4 max-w-xl mx-auto text-sm sm:text-base">Your personal, intelligent companion for
+                code, design, and study.</p>
+        </div>
+
+        <!-- Chat Area -->
+        <div
+            class="flex-1 bg-surface/80 backdrop-blur-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden relative rounded-2xl">
+            <!-- Glow effect behind chat -->
+            <div class="absolute inset-0 bg-primary/5 blur-[50px] -z-10 animate-pulse-neon pointer-events-none"></div>
+
+            <div class="p-6 border-b border-white/5 flex items-center justify-between bg-black/40">
+                <div class="flex items-center space-x-4 notranslate">
+                    <div
+                        class="w-12 h-12 bg-primary/10 border border-primary/20 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(255,51,102,0.2)]">
+                        🤖</div>
+                    <div>
+                        <span class="font-black text-lg tracking-widest text-primary block uppercase">X-BOT MODEL
+                            01</span>
+                        <span class="text-[10px] text-white/50 uppercase tracking-widest font-bold">System Online •
+                            Connection Secure</span>
+                    </div>
+                </div>
+                <div>
+                    <button onclick="clearChat()"
+                        class="text-[10px] border border-white/10 px-3 py-1.5 hover:bg-white/10 uppercase tracking-widest transition-colors font-bold text-white/60">CLEAR</button>
+                </div>
+            </div>
+
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6">
+                <!-- Initial Message -->
+                <div class="flex gap-4 max-w-[90%] sm:max-w-[75%]">
+                    <div
+                        class="w-[40px] h-[40px] bg-primary/10 border border-primary/20 flex items-center justify-center text-xl flex-shrink-0">
+                        🤖</div>
+                    <div
+                        class="bg-white/5 p-5 text-sm sm:text-base border border-white/5 shadow-inner backdrop-blur-md text-white/90 leading-relaxed rounded-md">
+                        <span
+                            class="text-primary font-black uppercase tracking-widest text-[10px] mb-2 block">Initialization
+                            Sequence Complete</span>
+                        Welcome to the Mentor Interface. I am fully operational and ready to assist you with complex
+                        problem solving, codebase analysis, or study session planning.<br /><br />
+                        What are our objectives for today? <br /><br />
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <button
+                                onclick="document.getElementById('chatInput').value='Analyze my code snippet'; sendMessage();"
+                                class="text-[10px] px-3 py-1.5 bg-white/5 hover:bg-primary/20 hover:text-primary transition-colors border border-white/10 text-white/60 font-medium tracking-wide">Analyze
+                                Code</button>
+                            <button
+                                onclick="document.getElementById('chatInput').value='Plan a study session'; sendMessage();"
+                                class="text-[10px] px-3 py-1.5 bg-white/5 hover:bg-primary/20 hover:text-primary transition-colors border border-white/10 text-white/60 font-medium tracking-wide">Plan
+                                Study</button>
+                            <button
+                                onclick="document.getElementById('chatInput').value='Recommend design tools'; sendMessage();"
+                                class="text-[10px] px-3 py-1.5 bg-white/5 hover:bg-primary/20 hover:text-primary transition-colors border border-white/10 text-white/60 font-medium tracking-wide">Design
+                                Tools</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-6 bg-black/60 border-t border-white/5 backdrop-blur-md">
+                <div class="flex gap-3 max-w-4xl mx-auto relative group">
+                    <div
+                        class="absolute -inset-1 bg-gradient-to-r from-primary/30 to-primary/0 blur opacity-30 group-focus-within:opacity-100 transition duration-500">
+                    </div>
+                    <input type="text" id="chatInput" placeholder="Enter query parameters..."
+                        class="flex-1 bg-[#0a0a0a] border border-white/10 px-6 py-4 focus:border-primary outline-none transition-all text-sm sm:text-base text-white placeholder:text-white/30 relative z-10 font-mono"
+                        onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()"
+                        class="bg-primary text-black px-8 py-4 hover:bg-white transition-all shadow-[0_0_20px_rgba(255,51,102,0.3)] relative z-10 font-black tracking-widest">SEND
+                        // </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

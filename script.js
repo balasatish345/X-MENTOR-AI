@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 splash.style.display = 'none';
             }, 1500); // Wait for transition to finish
         }
-    }, 5500); // 5.5s Hollywood Intro duration
+    }, 6500); // 6.5s Hollywood Intro duration
 
     // Filters
     const toolSearch = document.getElementById('toolSearch');

@@ -606,6 +606,148 @@ body {
     }
 }
 
+/* Loading Animation */
+.splash-loader-container {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 300px;
+    opacity: 0;
+    animation: fadeInLoader 0.5s ease 4.8s forwards;
+}
+
+.splash-loader-bar {
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.splash-loader-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: #00C853;
+    box-shadow: 0 0 10px #00C853;
+    animation: loaderFill 1.5s cubic-bezier(0.7, 0, 0.3, 1) 4.8s forwards;
+}
+
+.splash-loader-text {
+    font-size: 10px;
+    color: #00C853;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-weight: 900;
+}
+
+@keyframes fadeInLoader {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes loaderFill {
+    0% {
+        width: 0%;
+    }
+
+    40% {
+        width: 40%;
+    }
+
+    60% {
+        width: 45%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+.loading-dots::after {
+    content: '';
+    animation: dotBlink 1.5s steps(4, end) infinite;
+}
+
+@keyframes dotBlink {
+    0% {
+        content: '';
+    }
+
+    25% {
+        content: '.';
+    }
+
+    50% {
+        content: '..';
+    }
+
+    75% {
+        content: '...';
+    }
+
+    100% {
+        content: '';
+    }
+}
+
+/* Mobile Optimizations for Cinematic Splash */
+@media (max-width: 768px) {
+    .splash-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .splash-mentor-container {
+        margin-left: 0;
+        margin-top: 20px;
+        align-items: center;
+    }
+
+    .splash-x {
+        font-size: 140px;
+        line-height: 0.8;
+    }
+
+    .splash-mentor {
+        font-size: 40px;
+    }
+
+    .splash-subtitle {
+        font-size: 8px;
+        letter-spacing: 0.2em;
+    }
+
+    .splash-loader-container {
+        max-width: 200px;
+    }
+
+    @keyframes dataScanReveal {
+        0% {
+            opacity: 0;
+            clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+            transform: translateX(-20px);
+            filter: blur(10px);
+        }
+
+        50% {
+            opacity: 1;
+            filter: blur(0);
+        }
+
+        100% {
+            opacity: 1;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+            transform: translateX(0);
+            letter-spacing: 4px;
+        }
+    }
+}
+
 /* UI Visibility Control */
 body:not(.app-ready) nav,
 body:not(.app-ready) main,
