@@ -238,25 +238,40 @@ const newsData = [
     {
         title: "Apple Announces New AI Chips for Mac",
         source: "TechCrunch",
-        date: "2 hours ago",
-        summary: "The latest M4 Max chips feature dedicated neural engines for on-device generative AI tasks."
+        publishedAt: new Date().toISOString(),
+        description: "The latest M4 Max chips feature dedicated neural engines for on-device generative AI tasks.",
+        url: "#",
+        urlToImage: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400"
     },
     {
         title: "OpenAI's SearchGPT Enters Beta Phase",
         source: "The Verge",
-        date: "5 hours ago",
-        summary: "The search engine features real-time web access and conversational results."
+        publishedAt: new Date().toISOString(),
+        description: "The search engine features real-time web access and conversational results.",
+        url: "#",
+        urlToImage: "https://images.unsplash.com/photo-1620712943543-bcc4628c7007?auto=format&fit=crop&q=80&w=400"
     },
     {
         title: "NVIDIA Hits Record High on AI Demand",
         source: "Reuters",
-        date: "1 day ago",
-        summary: "Global demand for Blackwell GPUs continues to drive unprecedented market growth."
+        publishedAt: new Date().toISOString(),
+        description: "Global demand for Blackwell GPUs continues to drive unprecedented market growth.",
+        url: "#",
+        urlToImage: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=400"
     }
 ];
 
 // Initialize UI
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Filters
+    const toolSearch = document.getElementById('toolSearch');
+    const categoryFilter = document.getElementById('categoryFilter');
+    if (toolSearch) toolSearch.addEventListener('input', filterTools);
+    if (categoryFilter) categoryFilter.addEventListener('change', filterTools);
+
+    // Render fallback data immediately so it's not empty while waiting for API
+    renderFallbackNews();
+
     // Cinematic Splash Screen Orchestration
     setTimeout(() => {
         const splash = document.getElementById('splash-screen');
@@ -279,12 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 1500); // Wait for transition to finish
         }
     }, 6500); // 6.5s Hollywood Intro duration
-
-    // Filters
-    const toolSearch = document.getElementById('toolSearch');
-    const categoryFilter = document.getElementById('categoryFilter');
-    if (toolSearch) toolSearch.addEventListener('input', filterTools);
-    if (categoryFilter) categoryFilter.addEventListener('change', filterTools);
 });
 
 function renderTools(tools) {
@@ -324,23 +333,21 @@ const GNEWS_API_KEY = "2ded3b42e811c6631c82559c3dc5adb4"; // Replace with the ac
 
 async function fetchRealNews() {
     try {
-        // GNews API Endpoint (Top headlines for technology)
         const url = `https://gnews.io/api/v4/top-headlines?category=technology&lang=en&apikey=${GNEWS_API_KEY}`;
         const response = await fetch(url);
 
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error("GNews API Error Details:", errorData);
-            throw new Error(`API failed: ${errorData.errors ? errorData.errors[0] : response.statusText}`);
+            console.warn(`GNews API returned status ${response.status}. Falling back to curated data.`);
+            renderFallbackNews();
+            return;
         }
 
         const data = await response.json();
 
-        // Map GNews response to our app's structure
         if (data.articles && data.articles.length > 0) {
             const mappedArticles = data.articles.map(article => ({
                 title: article.title,
-                source: { name: article.source.name },
+                source: article.source.name || article.source,
                 publishedAt: article.publishedAt,
                 description: article.description,
                 url: article.url,
@@ -354,7 +361,7 @@ async function fetchRealNews() {
             renderFallbackNews();
         }
     } catch (error) {
-        console.error("❌ X-LAUNCH Error:", error.message);
+        console.error("❌ News Fetch Error:", error.message);
         renderFallbackNews();
     }
 }
@@ -369,22 +376,33 @@ function renderNews(news, targetId = 'newsGrid') {
     const grid = document.getElementById(targetId);
     if (!grid) return;
 
-    grid.innerHTML = news.map(item => `
-        <div class="flex flex-col group cursor-pointer hover:bg-white/5 p-4 rounded-2xl transition-all border border-transparent hover:border-white/10" onclick="window.open('${item.url || '#'}', '_blank')">
-            <div class="h-48 rounded-xl mb-6 border border-white/5 overflow-hidden">
-                <img src="${item.urlToImage || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400'}" 
-                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                     onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400'">
+    if (!news || news.length === 0) {
+        grid.innerHTML = '<p class="text-white/20 text-center col-span-full py-12">No news available at the moment.</p>';
+        return;
+    }
+
+    grid.innerHTML = news.map(item => {
+        const sourceName = (item.source && typeof item.source === 'object') ? item.source.name : item.source;
+        const displayDate = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : 'Recent';
+        const displayImg = item.urlToImage || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400';
+
+        return `
+            <div class="flex flex-col group cursor-pointer hover:bg-white/5 p-4 rounded-2xl transition-all border border-transparent hover:border-white/10" onclick="window.open('${item.url || '#'}', '_blank')">
+                <div class="h-48 rounded-xl mb-6 border border-white/5 overflow-hidden">
+                    <img src="${displayImg}" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                         onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400'">
+                </div>
+                <div class="flex items-center space-x-3 mb-2 text-[10px] font-black text-primary/60 uppercase tracking-widest">
+                    <span>${sourceName || 'Tech News'}</span>
+                    <span class="w-1 h-1 rounded-full bg-white/20"></span>
+                    <span>${displayDate}</span>
+                </div>
+                <h3 class="text-lg font-bold mb-3 group-hover:text-primary transition-colors leading-tight">${item.title}</h3>
+                <p class="text-white/40 text-xs leading-relaxed line-clamp-3">${item.description || item.summary || ''}</p>
             </div>
-            <div class="flex items-center space-x-3 mb-2 text-[10px] font-black text-primary/60 uppercase tracking-widest">
-                <span>${item.source.name || item.source}</span>
-                <span class="w-1 h-1 rounded-full bg-white/20"></span>
-                <span>${new Date(item.publishedAt || Date.now()).toLocaleDateString()}</span>
-            </div>
-            <h3 class="text-lg font-bold mb-3 group-hover:text-primary transition-colors leading-tight">${item.title}</h3>
-            <p class="text-white/40 text-xs leading-relaxed line-clamp-3">${item.description || item.summary || ''}</p>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function filterTools() {
