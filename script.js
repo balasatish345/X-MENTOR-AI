@@ -547,19 +547,17 @@ function sendMessage() {
 function appendMessage(sender, text) {
     const chat = document.getElementById('chatMessages');
     const wrapper = document.createElement('div');
-    wrapper.className = `flex gap-3 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
+    wrapper.className = `flex gap-4 max-w-[90%] sm:max-w-[75%] ${sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`;
 
-    if (sender === 'bot') {
-        const avatar = document.createElement('div');
-        avatar.className = 'bot-avatar';
-        avatar.innerText = '🤖';
-        wrapper.appendChild(avatar);
-    }
+    const avatar = document.createElement('div');
+    avatar.className = `w-[40px] h-[40px] flex items-center justify-center text-xl flex-shrink-0 ${sender === 'user' ? 'bg-white/5 border border-white/10' : 'bg-primary/10 border border-primary/20'}`;
+    avatar.innerText = sender === 'user' ? '👤' : '🤖';
+    wrapper.appendChild(avatar);
 
     const div = document.createElement('div');
     div.className = sender === 'user'
-        ? 'bg-primary/20 text-white self-end ml-auto rounded-2xl p-4 max-w-[85%] text-sm rounded-tr-none border border-primary/30 shadow-[0_4px_15px_rgba(0,200,83,0.1)]'
-        : 'bg-white/5 text-white rounded-2xl p-4 max-w-[85%] text-sm rounded-tl-none border border-white/10';
+        ? 'bg-primary/10 p-5 text-sm sm:text-base border border-primary/20 shadow-inner backdrop-blur-md text-white/90 leading-relaxed'
+        : 'bg-white/5 p-5 text-sm sm:text-base border border-white/5 shadow-inner backdrop-blur-md text-white/90 leading-relaxed';
 
     div.innerHTML = text;
     wrapper.appendChild(div);
