@@ -413,6 +413,19 @@ function showView(viewId, category = 'all') {
         target.classList.add('block');
     }
 
+    // Dynamic Theme Colors based on View
+    const themeColors = {
+        'home': '#00C853',   // Neon Green
+        'code': '#00BFFF',   // Deep Sky Blue
+        'play': '#B026FF',   // Neon Purple
+        'news': '#FFD700',   // Cyber Yellow
+        'tasks': '#FF8C00',  // Neon Orange
+        'chat': '#FF3366'    // Hot Pink / Red
+    };
+
+    const newColor = themeColors[viewId] || '#00C853';
+    document.documentElement.style.setProperty('--primary', newColor);
+
     // Update Navbar active state
     document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active', 'text-primary'));
     const activeNavBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => btn.getAttribute('onclick')?.includes(`'${viewId}'`));
@@ -422,6 +435,16 @@ function showView(viewId, category = 'all') {
     document.querySelectorAll('.task-bar-item').forEach(el => el.classList.remove('active'));
     const activeTaskBtn = document.getElementById(`btn-${viewId}`);
     if (activeTaskBtn) activeTaskBtn.classList.add('active');
+
+    // Toggle Chat Trigger Bar Visibility
+    const chatTrigger = document.querySelector('.chat-trigger-container');
+    if (chatTrigger) {
+        if (viewId === 'chat') {
+            chatTrigger.style.display = 'none';
+        } else {
+            chatTrigger.style.display = 'block';
+        }
+    }
 
     // Handle Category Filtering (if on home view)
     if (viewId === 'home' && category !== 'all') {
@@ -503,10 +526,7 @@ function toggleNews() {
 
 // Chatbot Logic
 function toggleChat() {
-    const chatWin = document.getElementById('chatWindow');
-    if (!chatWin) return;
-    chatWin.classList.toggle('hidden');
-    chatWin.classList.toggle('flex');
+    showView('chat');
 }
 
 function sendMessage() {
