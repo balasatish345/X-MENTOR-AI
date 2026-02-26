@@ -102,9 +102,12 @@ async function fetchNews() {
         </div>
     `;
 
-    const url = `https://newsapi.org/v2/everything?q=tesla&sortBy=publishedAt&apiKey=${NEWS_API_KEY}`;
-
     try {
+        if (window.location.protocol === 'file:') {
+            throw new Error("Protocol: file:// block. NewsAPI requires localhost (Live Server).");
+        }
+
+        const url = `https://newsapi.org/v2/everything?q=tesla&sortBy=publishedAt&apiKey=${NEWS_API_KEY}`;
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -122,9 +125,14 @@ async function fetchNews() {
     } catch (error) {
         console.error('Error fetching news:', error);
         newsFeed.innerHTML = `
-            <div class="text-center p-8 bg-red-500/5 border border-red-500/20 rounded-xl">
-                <p class="text-[10px] text-red-500 uppercase font-black tracking-widest">Sync Error</p>
-                <p class="text-[8px] text-white/30 mt-2">${error.message.includes('fetch') ? 'Blocked by Browser (Use Live Server)' : error.message}</p>
+            <div class="text-center p-8 bg-primary/5 border border-primary/20 rounded-xl space-y-4">
+                <div class="text-2xl">🖥️</div>
+                <p class="text-[9px] text-primary uppercase font-black tracking-widest">Live Server Required</p>
+                <p class="text-[8px] text-white/40 leading-relaxed px-4">
+                    NewsAPI.org blocks requests from local files. 
+                    <b>Right-click dashboard.html</b> and select <b>"Open with Live Server"</b>.
+                </p>
+                <button onclick="fetchNews()" class="mt-4 text-[8px] border border-primary/30 px-6 py-2 hover:bg-primary hover:text-black transition-all font-black uppercase tracking-widest">Retry Handshake</button>
             </div>
         `;
     }

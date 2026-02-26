@@ -345,11 +345,32 @@ async function fetchRealNews() {
         `;
     });
 
+    const showCorsError = () => targets.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = `
+            <div class="col-span-full flex flex-col items-center py-12 bg-primary/5 border border-primary/20 rounded-3xl">
+                <span class="text-4xl mb-4">🖥️</span>
+                <span class="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Live Server Required</span>
+                <div class="text-[9px] text-white/50 mt-6 max-w-sm text-center leading-relaxed px-6 space-y-4">
+                    <p>NewsAPI.org blocks requests from <code class="bg-white/10 px-1 rounded text-primary">file://</code> links.</p>
+                    <p>Please right-click <code class="text-white">index.html</code> and select <span class="text-white font-bold">"Open with Live Server"</span>.</p>
+                </div>
+                <button onclick="fetchRealNews()" class="mt-8 px-6 py-2 border border-primary/40 text-[9px] font-black tracking-widest hover:bg-primary hover:text-black transition-all">RETRY ON LOCALHOST</button>
+            </div>
+        `;
+    });
+
     showLoading();
 
     try {
-        const url = `https://newsapi.org/v2/everything?q=tesla&sortBy=publishedAt&apiKey=${NEWS_API_KEY}`;
+        if (window.location.protocol === 'file:') {
+            console.error("🚨 file:// detected. NewsAPI requires localhost.");
+            showCorsError();
+            setTimeout(renderFallbackNews, 5000);
+            return;
+        }
 
+        const url = `https://newsapi.org/v2/everything?q=tesla&sortBy=publishedAt&apiKey=${NEWS_API_KEY}`;
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -379,19 +400,8 @@ async function fetchRealNews() {
         }
     } catch (error) {
         console.error("🚨 News Pulse Error:", error);
-
-        targets.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = `
-                <div class="col-span-full flex flex-col items-center py-12 bg-red-500/5 border border-red-500/20 rounded-3xl">
-                    <span class="text-2xl mb-4">🚫</span>
-                    <span class="text-[9px] font-black uppercase tracking-widest text-red-500">Sync Interrupted</span>
-                    <p class="text-[8px] text-white/40 mt-2 px-6 text-center">${error.message.includes('fetch') ? 'CORS/Security Block: Please run via Live Server' : error.message}</p>
-                    <button onclick="fetchRealNews()" class="mt-4 px-4 py-2 border border-white/10 text-[8px] font-bold hover:bg-white hover:text-black transition-all">RETRY</button>
-                </div>
-            `;
-        });
-        setTimeout(renderFallbackNews, 3000);
+        showCorsError();
+        setTimeout(renderFallbackNews, 5000);
     }
 }
 
