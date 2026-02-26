@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-Mentor AI | AI Resource Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Translate Script (Custom Trigger) -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,te,hi,de,ja,zh-CN',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00C853',
+                        background: '#000000',
+                        navy: '#1a1a2e',
+                        surface: '#121212',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background text-white font-sans antialiased overflow-x-hidden">
+
+    <!-- Cinematic Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-x">X</div>
+        <div class="splash-mentor uppercase tracking-[15px]">MENTOR <span class="text-primary italic">AI</span></div>
+    </div>
+
+    <!-- Special Neon Button (Top Left) - Now triggers News -->
+    <div class="fixed top-4 left-4 z-50">
+        <button onclick="toggleNews()"
+            class="bg-primary hover:bg-white text-black font-bold py-2 px-4 rounded-full animate-pulse-neon transition-all duration-300 transform hover:scale-105 active:scale-95 text-xs flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-black animate-pulse"></span>
+            X-LAUNCH
+        </button>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-40 bg-background/80 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-2 pl-20"> <!-- Padded for the neon button -->
+                <button onclick="showView('home')"
+                    class="text-2xl font-bold tracking-tighter hover:text-primary transition-colors">X-MENTOR <span
+                        class="text-primary">AI</span></button>
+            </div>
+
+            <div class="hidden lg:flex items-center space-x-8 text-xs font-bold tracking-widest">
+                <button onclick="showView('home', 'aitools')"
+                    class="nav-btn active hover:text-primary transition-colors uppercase">AI TOOLS</button>
+                <button onclick="showView('code')"
+                    class="nav-btn hover:text-primary transition-colors uppercase">X-CODE</button>
+                <button onclick="showView('play')"
+                    class="nav-btn hover:text-primary transition-colors uppercase">X-PLAY</button>
+                <button onclick="showView('news')" class="nav-btn hover:text-primary transition-colors uppercase">TECH
+                    NEWS</button>
+                <button onclick="toggleChat()" class="hover:text-primary transition-colors uppercase">ASK AI</button>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <!-- X-TRANSFORMER Selector -->
+                <div class="relative group" id="lang-selector">
+                    <button
+                        class="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl hover:border-primary/50 transition-all text-[10px] font-black tracking-widest uppercase">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-primary" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                        </svg>
+                        English
+                    </button>
+                    <div
+                        class="absolute top-full right-0 mt-2 w-40 bg-navy/95 backdrop-blur-3xl border border-white/10 rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 shadow-2xl">
+                        <button onclick="changeLanguage('en')"
+                            class="w-full text-left px-4 py-2 rounded-xl text-[10px] font-bold hover:bg-primary hover:text-black transition-colors uppercase tracking-widest mb-1">English</button>
+                        <button onclick="changeLanguage('te')"
+                            class="w-full text-left px-4 py-2 rounded-xl text-[10px] font-bold hover:bg-primary hover:text-black transition-colors uppercase tracking-widest mb-1">Telugu</button>
+                        <button onclick="changeLanguage('hi')"
+                            class="w-full text-left px-4 py-2 rounded-xl text-[10px] font-bold hover:bg-primary hover:text-black transition-colors uppercase tracking-widest mb-1">Hindi</button>
+                    </div>
+                </div>
+
+                <button onclick="window.location.href='auth.html'"
+                    class="border border-white/20 hover:border-primary px-4 py-2 rounded-lg text-sm transition-all text-white no-underline">SIGN
+                    IN</button>
+                <button onclick="showView('home')"
+                    class="bg-primary text-black px-4 py-2 rounded-lg text-sm font-bold hover:bg-white transition-all">GET
+                    STARTED</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Bottom Task Bar (Dock) -->
+    <footer class="task-bar">
+        <button onclick="showView('home')" class="task-bar-item active" id="btn-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+        </button>
+        <button onclick="showView('tasks')" class="task-bar-item" id="btn-tasks">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+        </button>
+        <button onclick="showView('code')" class="task-bar-item" id="btn-code">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+        </button>
+        <button onclick="showView('play')" class="task-bar-item" id="btn-play">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </button>
+        <button onclick="showView('news')" class="task-bar-item" id="btn-news">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+        </button>
+    </footer>
+
+    <!-- HOME VIEW -->
+    <main id="view-home" class="view block">
+        <!-- Hero Section -->
+        <section class="relative pt-40 pb-24 overflow-hidden">
+            <div
+                class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-primary/5 blur-[120px] -z-10 rounded-full">
+            </div>
+            <div class="max-w-7xl mx-auto px-6 text-center">
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 animate-fade-in stagger-1">
+                    AI Resource Intelligence <br />
+                    <span class="text-primary italic">for Students</span>
+                </h1>
+                <p
+                    class="text-white/60 text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in stagger-2 uppercase tracking-wide font-medium">
+                    An AI-driven platform built to <span class="text-white font-bold">recommend study and coding
+                        tools</span> for any purpose,
+                    allowing you to <span class="text-white font-bold">learn, execute, and link directly</span> to the
+                    frontier of technology.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in stagger-3">
+                    <button onclick="window.location.href='auth.html'"
+                        class="bg-primary hover:bg-white text-black font-extrabold py-4 px-10 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 text-sm tracking-widest shadow-[0_0_30px_rgba(0,200,83,0.3)]">
+                        GET STARTED
+                    </button>
+                    <button onclick="toggleChat()"
+                        class="glass hover:bg-white/10 text-white font-bold py-4 px-10 rounded-full transition-all text-sm border border-white/10 tracking-widest">
+                        CONSULT AI
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Intelligence Section (Legacy Narrative Restored) -->
+        <section class="py-24 border-t border-white/5">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="glass p-8 rounded-[2.5rem] border border-white/10 hover-glow transition-all group">
+                    <div
+                        class="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-black transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-black mb-4 uppercase tracking-tighter">CODING RECOMMENDATIONS</h3>
+                    <p class="text-white/40 text-sm leading-relaxed">X-Mentor AI analyzes your project needs to
+                        recommend the best IDEs, APIs, and AI coding assistants like <span
+                            class="text-white">Cursor</span> and <span class="text-white">Github Copilot</span>.</p>
+                </div>
+
+                <div class="glass p-8 rounded-[2.5rem] border border-white/10 hover-glow transition-all group">
+                    <div
+                        class="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-black transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-black mb-4 uppercase tracking-tighter">STUDY & LEARNING APPS</h3>
+                    <p class="text-white/40 text-sm leading-relaxed">Discover top-tier learning platforms curated for
+                        mastery: <span class="text-white">W3Schools</span>, <span class="text-white">Khan
+                            Academy</span>, and <span class="text-white">Anki</span>.</p>
+                </div>
+
+                <div class="glass p-8 rounded-[2.5rem] border border-white/10 hover-glow transition-all group">
+                    <div
+                        class="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-black transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-black mb-4 uppercase tracking-tighter">EXECUTE & LINK</h3>
+                    <p class="text-white/40 text-sm leading-relaxed">Instantly test your ideas in the <span
+                            class="text-white">X-CODE Sandbox</span> and link directly to the websites of the world's
+                        most powerful AI tools.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Tools Section -->
+        <section id="tools" class="py-24 border-t border-white/5 bg-navy/5">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
+                    <div>
+                        <h2 class="text-4xl font-black tracking-tighter mb-4 uppercase">AI <span
+                                class="text-primary italic">DIRECTORY</span></h2>
+                        <p class="text-white/40 max-w-md">Curated selection of the most powerful tools for students,
+                            researchers, and creators.</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                        <div class="relative flex-1 sm:w-64">
+                            <input type="text" id="toolSearch" placeholder="Search tools..."
+                                class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-12 text-sm focus:border-primary/50 focus:outline-none transition-colors"
+                                oninput="filterTools()">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5 absolute left-4 top-1/2 -translate-y-1/2 text-white/20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <select id="categoryFilter" onchange="filterTools()"
+                            class="bg-white/5 border border-white/10 rounded-xl py-3 px-6 text-sm focus:border-primary/50 focus:outline-none transition-colors appearance-none cursor-pointer">
+                            <option value="all">All Categories</option>
+                            <option value="aitools">AI Tools</option>
+                            <option value="coding">Coding</option>
+                            <option value="writing">Writing</option>
+                            <option value="design">Design</option>
+                            <option value="research">Research</option>
+                            <option value="study">Study</option>
+                            <option value="productivity">Productivity</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="toolsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Tools will be injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Home Page Tech Pulse (Legacy) -->
+        <section class="py-24 bg-black/40 border-t border-white/5">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex items-center justify-between mb-12">
+                    <h2 class="text-3xl font-black tracking-tighter uppercase">TECH <span
+                            class="text-primary italic">PULSE</span></h2>
+                    <button onclick="showView('news')"
+                        class="text-primary text-xs font-black tracking-[0.3em] hover:text-white transition-colors">VIEW
+                        FULL FEED →</button>
+                </div>
+                <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- News Injected Here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- X-CODE VIEW -->
+    <main id="view-code" class="view hidden notranslate">
+        <section class="py-32 px-6">
+            <div class="max-w-7xl mx-auto text-center">
+                <div class="mb-12">
+                    <h2 class="text-5xl font-black tracking-tighter uppercase">X-CODE <span
+                            class="text-primary italic">PLAYGROUND</span></h2>
+                    <p class="text-white/40 mt-4 max-w-xl mx-auto">Build, test, and render HTML/CSS snippets in a
+                        high-performance sandbox environment.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[600px] text-left">
+                    <div class="bg-black/40 border border-white/10 rounded-[2rem] p-8 flex flex-col">
+                        <div class="flex items-center justify-between mb-6 border-b border-white/5 pb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                                <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                                <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                <span
+                                    class="text-[10px] font-black text-white/20 tracking-[0.3em] ml-4 uppercase">EDITOR_V1</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div id="compilerStatus"
+                                    class="hidden items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-xl">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+                                    <span
+                                        class="text-[9px] font-black text-primary uppercase tracking-widest">COMPILING...</span>
+                                </div>
+                                <button onclick="deployCode()"
+                                    class="bg-primary text-black px-8 py-2.5 rounded-2xl text-xs font-black hover:bg-white transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(0,255,83,0.3)]">DEPLOY
+                                    CODE</button>
+                            </div>
+                        </div>
+                        <textarea id="codeInput"
+                            class="flex-1 bg-transparent text-primary font-mono text-sm outline-none resize-none leading-relaxed custom-scrollbar"
+                            spellcheck="false" oninput="runCode()">
+<div class="container">
+  <div class="aura"></div>
+  <h1>X-MENTOR <span class="accent">AI</span></h1>
+  <p>Universal Learning Interface</p>
+  <button>INITIALIZE</button>
+</div>
+
+<style>
+  body { margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; background: #000; font-family: 'Inter', sans-serif; overflow: hidden; }
+  .container { text-align: center; position: relative; padding: 40px; border-radius: 40px; border: 1px solid rgba(0,200,83,0.2); }
+  .aura { position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(0,200,83,0.1) 0%, transparent 70%); filter: blur(20px); }
+  h1 { font-size: 48px; color: #fff; letter-spacing: -2px; margin: 0; }
+  .accent { color: #00C853; font-style: italic; }
+  p { color: rgba(255,255,255,0.4); margin-top: 10px; font-weight: bold; font-size: 12px; letter-spacing: 4px; }
+  button { margin-top: 30px; background: #00C853; border: none; padding: 15px 40px; border-radius: 20px; font-weight: 900; cursor: pointer; transition: 0.3s; }
+  button:hover { background: #fff; transform: scale(1.1); }
+</style></textarea>
+                    </div>
+                    <div class="bg-white border border-white/10 rounded-[2rem] overflow-hidden relative shadow-2xl">
+                        <iframe id="codeOutput" class="w-full h-full bg-white"></iframe>
+                        <div
+                            class="absolute inset-x-0 bottom-0 p-6 bg-navy/90 backdrop-blur-xl border-t border-white/5 flex items-center justify-between">
+                            <p class="text-[10px] text-white/40 font-black tracking-widest uppercase">REAL-TIME
+                                EXECUTION ENGINE</p>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                <span class="text-[10px] text-primary font-bold">STABLE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- X-PLAY VIEW -->
+    <main id="view-play" class="view hidden">
+        <section class="py-32 px-6">
+            <div class="max-w-7xl mx-auto text-center flex flex-col items-center">
+                <div class="mb-16">
+                    <h2 class="text-5xl font-black tracking-tighter uppercase">X-PLAY <span
+                            class="text-primary italic">STATION</span></h2>
+                    <p class="text-white/40 mt-4 max-w-xl mx-auto">Cognitive recovery sessions built for student focus.
+                        Professional arcade grade.</p>
+                </div>
+
+                <div class="relative group">
+                    <!-- Retro Console Design -->
+                    <div
+                        class="w-[450px] aspect-square bg-[#0a0a0a] border-[12px] border-white/5 rounded-[4rem] p-12 flex flex-col items-center justify-center relative shadow-[0_0_100px_rgba(0,0,0,0.8)]">
+                        <div
+                            class="absolute inset-0 bg-primary/5 rounded-[3rem] blur-2xl -z-10 group-hover:bg-primary/10 transition-all duration-700">
+                        </div>
+
+                        <canvas id="snakeGame" width="300" height="300"
+                            class="bg-black/90 rounded-3xl border border-white/5 shadow-inner"></canvas>
+
+                        <div id="gameOverlay"
+                            class="absolute inset-[12px] bg-navy/95 backdrop-blur-3xl rounded-[3.2rem] flex flex-col items-center justify-center z-10">
+                            <div
+                                class="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-8 border border-primary/20">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-primary"
+                                    fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M7 6l12 6-12 6V6z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-3xl font-black text-white mb-2 italic uppercase">SNAKE <span
+                                    class="text-primary">CORE</span></h3>
+                            <button onclick="startSnake()"
+                                class="mt-8 bg-primary text-black px-12 py-4 rounded-full font-black hover:bg-white transition-all shadow-[0_0_40px_rgba(0,200,83,0.5)]">BOOT
+                                UP</button>
+                        </div>
+                    </div>
+
+                    <!-- Score Display -->
+                    <div class="mt-12 flex gap-8 justify-center">
+                        <div class="bg-white/5 border border-white/10 px-8 py-4 rounded-3xl text-center min-w-[140px]">
+                            <p class="text-[9px] font-black text-white/30 tracking-[0.3em] uppercase mb-1">HIGH SCORE
+                            </p>
+                            <span id="highScore" class="text-3xl font-black text-primary tabular-nums">000</span>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 px-8 py-4 rounded-3xl text-center min-w-[140px]">
+                            <p class="text-[9px] font-black text-white/30 tracking-[0.3em] uppercase mb-1">CURRENT</p>
+                            <span id="currentScore" class="text-3xl font-black text-white tabular-nums">000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- TECH NEWS VIEW -->
+    <main id="view-news" class="view hidden">
+        <section class="py-32 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-20">
+                    <h2 class="text-5xl font-black tracking-tighter uppercase">TECH <span
+                            class="text-primary italic">PULSE</span></h2>
+                    <p class="text-white/40 mt-4 max-w-xl mx-auto">Real-time intelligence from the frontier of
+                        technology. <i>(Note: API live only on localhost/deployed)</i></p>
+                </div>
+                <div id="newsGridFull" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <!-- News Injected Here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- TASKS VIEW -->
+    <main id="view-tasks" class="view hidden">
+        <section class="py-32 px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+                    <div>
+                        <h2 class="text-5xl font-black tracking-tighter uppercase">STUDY <span
+                                class="text-primary italic">HUB</span></h2>
+                        <p class="text-white/40 mt-4">Manage your daily goals and track your progress to mastery.</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-black text-white/30 tracking-[0.3em] uppercase mb-2">MASTER LEVEL</p>
+                        <div class="text-4xl font-black text-primary italic">Lvl 12</div>
+                    </div>
+                </div>
+
+                <!-- Progress Tracker -->
+                <div class="glass p-8 rounded-[2.5rem] mb-12 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-end mb-4">
+                            <span class="text-sm font-bold uppercase tracking-widest">Daily Progress</span>
+                            <span id="progressText" class="text-primary font-black">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl -z-10 rounded-full translate-x-1/2 -translate-y-1/2">
+                    </div>
+                </div>
+
+                <!-- Task List -->
+                <div id="tasksList" class="space-y-4">
+                    <!-- Tasks injected here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chatbot Window -->
+    <div id="chatWindow"
+        class="fixed bottom-24 right-6 w-[400px] h-[550px] bg-surface border border-white/10 rounded-2xl shadow-2xl flex-col hidden z-50 overflow-hidden">
+        <div class="p-4 bg-primary/10 border-b border-white/5 flex items-center justify-between">
+            <div class="flex items-center space-x-3 notranslate">
+                <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-lg">🤖</div>
+                <div>
+                    <span class="font-bold text-sm tracking-widest text-primary block">X-BOT</span>
+                    <span class="text-[9px] text-white/40 uppercase tracking-tighter">Your AI Mentor</span>
+                </div>
+            </div>
+            <button onclick="toggleChat()" class="text-white/40 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <div class="bg-white/5 rounded-2xl p-4 max-w-[85%] text-sm rounded-tl-none border border-white/5">
+                Hi there! 👋 I'm <b>X-Bot</b>, your AI companion. I'm here to help you find the best tools for your
+                studies and coding projects! <br /><br />
+                How can I assist you today? 😊 <br /><br />
+                <div class="text-[10px] text-white/30 italic">Try: "Best AI for coding" or "I want to learn design"
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-white/5 flex gap-2">
+            <input type="text" id="chatInput" placeholder="Message X-Bot..."
+                class="flex-1 bg-white/5 border border-white/10 px-4 py-2 rounded-xl focus:border-primary outline-none transition-all text-sm">
+            <button onclick="sendMessage()"
+                class="bg-primary text-black p-2 rounded-xl hover:bg-white transition-all shadow-[0_0_15px_rgba(0,200,83,0.2)]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                        d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- News Drawer Overlay -->
+    <div id="newsOverlay"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55] hidden opacity-0 transition-opacity duration-300"
+        onclick="toggleNews()"></div>
+
+    <!-- News Drawer (Legacy RESTORED) -->
+    <div id="newsDrawer"
+        class="fixed top-0 left-0 w-[400px] h-full bg-navy/95 backdrop-blur-3xl z-[60] border-r border-white/10 -translate-x-full transition-transform duration-500 flex flex-col shadow-[20px_0_50px_rgba(0,0,0,0.5)]">
+        <div class="p-8 border-b border-white/5 flex items-center justify-between">
+            <h2 class="text-xl font-black italic tracking-tighter uppercase">X-LAUNCH <span
+                    class="text-primary">FEED</span></h2>
+            <button onclick="toggleNews()" class="text-white/40 hover:text-white transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div id="newsGridDrawer" class="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+            <!-- News items injected here -->
+        </div>
+        <div class="p-8 border-t border-white/5 bg-black/20">
+            <button onclick="showView('news'); toggleNews();"
+                class="w-full bg-white/5 hover:bg-primary text-white hover:text-black py-4 rounded-2xl text-[10px] font-black tracking-[0.3em] transition-all uppercase border border-white/10">EXPAND
+                FULL VIEW</button>
+        </div>
+    </div>
+
+    <!-- Chat Trigger -->
+    <button onclick="toggleChat()"
+        class="fixed bottom-6 right-6 w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-[0_0_30px_#00C853] z-50 hover:scale-110 transition-all active:scale-95">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+    </button>
+
+    <div id="google_translate_element"
+        style="position:fixed; bottom:0; left:0; opacity:0; pointer-events:none; z-index:-100;"></div>
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
